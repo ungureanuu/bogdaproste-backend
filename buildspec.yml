@@ -6,5 +6,8 @@ phases:
       # Install dependencies needed for running tests
       - npm install
 
+       # Install pip
+      - sudo apt-get install python-pip
+
       # Upgrade AWS CLI to the latest version
       - pip install --upgrade awscli
