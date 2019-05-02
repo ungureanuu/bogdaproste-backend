@@ -1,6 +1,6 @@
 const express = require('express'),
     path = require('path'),
-    favicon = require('serve-favicon'),
+    //favicon = require('serve-favicon'),
     bodyParser = require('body-parser'),
     cors = require('cors'),
     // mongoose = require('mongoose'),
@@ -15,7 +15,7 @@ const businessRoute = require('./routes/business.route');
 
 const app = express();
 app.use(express.static(path.join(__dirname, '../dist')));
-app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')))
+//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')))
 app.use(bodyParser.json());
 app.use(cors());
 app.use('/business', businessRoute);
