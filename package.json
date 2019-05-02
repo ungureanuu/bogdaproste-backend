@@ -4,9 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "serve": "nodemon server",
-    "start": "npm run"
+    "start": "npm start"
   },
   "keywords": [],
   "author": "",
