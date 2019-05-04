@@ -1,21 +1,21 @@
 {
-  "name": "server",
-  "version": "1.0.0",
-  "description": "",
-  "main": "app.js",
-  "scripts": {
-    "start": "npm start"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "name": "bogdaproste-server",
+  "description": "Basic Node App",
+  "version": "0.0.1",
+  "private": true,
   "dependencies": {
-    "body-parser": "^1.18.3",
-    "cors": "^2.8.5",
-    "express": "^4.16.4",
-    "mongoose": "^5.4.0"
-  },
-  "devDependencies": {
-    "nodemon": "^1.18.9"
+      "bcrypt-nodejs": "0.0.3",
+      "dotenv": "^7.0.0",
+      "express": "^4.16.4",
+      "express-fileupload": "^1.1.4",
+      "image-size": "^0.7.3",
+      "jwt-simple": "^0.5.6",
+      "mongoose": "^5.5.2",
+      "nodemailer": "^6.1.0",
+      "passport": "^0.4.0",
+      "passport-jwt": "^4.0.0",
+      "passport-local": "^1.0.0",
+      "sharp": "^0.22.0",
+      "zipcodes": "^8.0.0"
   }
 }
