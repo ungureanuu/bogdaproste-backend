@@ -1,5 +1,4 @@
 const express = require('express'),
-const router = express.Router(),
 
 path = require('path'),
 //favicon = require('serve-favicon'),
@@ -7,7 +6,7 @@ bodyParser = require('body-parser'),
 cors = require('cors'),
 businessRoute = require('./routes/business.route');
 
-mongoose = require('mongoose'),
+const mongoose = require('mongoose'),
 config = require('./DB');
 mongoose.Promise = global.Promise;
 mongoose.connect(config.DB, { useNewUrlParser: true }).then(
@@ -21,6 +20,8 @@ app.use(express.static(path.join(__dirname, '../dist')));
 app.use(bodyParser.json());
 app.use(cors());
 app.use('/business', businessRoute);
+
+const router = express.Router();
 
 /* GET home page */
 router.get('/', function(req, res, next) {
