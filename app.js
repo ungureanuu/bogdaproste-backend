@@ -1,10 +1,11 @@
-const express = require('express'),
+const express = require('express');
+const path = require('path');
+const favicon = require('serve-favicon');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const router = require('./routes/business.route');
 
-path = require('path'),
-//favicon = require('serve-favicon'),
-bodyParser = require('body-parser'),
-cors = require('cors'),
-businessRoute = require('./routes/business.route');
+
 
 const mongoose = require('mongoose'),
 config = require('./DB');
@@ -15,18 +16,14 @@ mongoose.connect(config.DB, { useNewUrlParser: true }).then(
 );
 
 const app = express();
+
+// uncomment after placing favicong in public
+// app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')))
 app.use(express.static(path.join(__dirname, '../dist')));
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')))
 app.use(bodyParser.json());
 app.use(cors());
-app.use('/business', businessRoute);
+app.use('/', router);
 
-const router = express.Router();
-
-/* GET home page */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Cool, huh!', condition: true, anyArray: [1,2,3] });
-});
 
 const port = process.env.PORT || 8080;
 
