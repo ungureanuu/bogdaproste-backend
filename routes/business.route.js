@@ -14,21 +14,20 @@ businessRoutes.route('/add').post(function (req, res) {
             res.status(200).json({ 'business': 'business in added successfully' });
         })
         .catch(err => {
-            res.status(400).send("unable to save to database");
+            res.status(400).send("unable to be saved in database" + err);
         });
 });
 
 // Defined get data(index or listing) route
-businessRoutes.route('/').get(function (req, res) {
-    Business.find(function (err, businesses) {
-        if (err) {
-            console.log(err);
-        }
-        else {
-            res.json(businesses);
-        }
+businessRoutes.route('/').get( async (req, res) => {
+    Business.find({}, (err, user) => {
+            if (err) {
+              res.status(500).send(err);
+            }
+            res.status(200).json(user);
     });
 });
+
 
 // Defined edit route
 businessRoutes.route('/edit/:id').get(function (req, res) {

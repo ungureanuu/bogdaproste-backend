@@ -43,4 +43,15 @@ let Survey = new Schema({
     }
 });
 
-module.exports = mongoose.model('Business', Survey);
+let SurveySchema = new Schema({
+  name: {
+      type: String
+  },
+  age: {
+      type: Number
+  }
+}, {
+      collection: '_users'
+  });
+
+module.exports = mongoose.model('Surveys', SurveySchema);
