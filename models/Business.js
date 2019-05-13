@@ -44,12 +44,27 @@ let Survey = new Schema({
 });
 
 let SurveySchema = new Schema({
-  name: {
-      type: String
+  sex: {
+      type: Number
   },
   age: {
-      type: Number
-  }
+    type: String
+  },
+  firstName: {
+    type: String
+  },
+  lastName: {
+    type: String
+  },
+  phone: {
+    type: String
+  },
+  email: {
+    type: String
+  },
+  agreement: {
+    type: Number
+  },
 }, {
       collection: 'volunteers'
   });
