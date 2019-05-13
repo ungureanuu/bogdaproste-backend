@@ -51,7 +51,7 @@ let SurveySchema = new Schema({
       type: Number
   }
 }, {
-      collection: '_users'
+      collection: 'volunteers'
   });
 
 module.exports = mongoose.model('Surveys', SurveySchema);
