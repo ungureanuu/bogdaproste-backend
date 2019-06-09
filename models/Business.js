@@ -65,6 +65,9 @@ let SurveySchema = new Schema({
   agreement: {
     type: Number
   },
+  date: {
+    type: Date
+  },
 }, {
       collection: 'volunteers'
   });
