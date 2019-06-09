@@ -8,7 +8,7 @@ let Business = require('../models/Business');
 
 // Defined store route
 businessRoutes.route('/add').post(function (req, res) {
-    let business = new Business(req.body);
+    let business = new Business.Surveys(req.body);
     business.save()
         .then(business => {
             res.status(200).json({ 'business': 'business in added successfully' });
@@ -18,14 +18,34 @@ businessRoutes.route('/add').post(function (req, res) {
         });
 });
 
+businessRoutes.route('/addContent').post(function (req, res) {
+  let business = new Business.Content(req.body);
+  business.save()
+      .then(business => {
+          res.status(200).json({ 'business': 'business in added successfully' });
+      })
+      .catch(err => {
+          res.status(400).send("unable to be saved in database" + err);
+      });
+});
+
 // Defined get data(index or listing) route
 businessRoutes.route('/get').get( async (req, res) => {
-    Business.find({}, (err, user) => {
+    Business.Surveys.find({}, (err, user) => {
             if (err) {
               res.status(500).send(err);
             }
             res.status(200).json(user);
     });
+});
+
+businessRoutes.route('/getContent').get( async (req, res) => {
+  Business.Content.find({}, (err, user) => {
+          if (err) {
+            res.status(500).send(err);
+          }
+          res.status(200).json(user);
+  });
 });
 
 

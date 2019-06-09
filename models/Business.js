@@ -72,4 +72,16 @@ let SurveySchema = new Schema({
       collection: 'volunteers'
   });
 
-module.exports = mongoose.model('Surveys', SurveySchema);
+  let ContentSchema = new Schema({
+    title: {
+        type: String
+    },
+    body: {
+      type: String
+    }
+  }, {
+        collection: 'content'
+    });
+
+module.exports = {Surveys: mongoose.model('Surveys', SurveySchema),
+                  Content: mongoose.model('Content', ContentSchema)};
