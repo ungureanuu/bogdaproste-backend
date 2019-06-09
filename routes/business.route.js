@@ -19,7 +19,7 @@ businessRoutes.route('/add').post(function (req, res) {
 });
 
 // Defined get data(index or listing) route
-businessRoutes.route('/').get( async (req, res) => {
+businessRoutes.route('/get').get( async (req, res) => {
     Business.find({}, (err, user) => {
             if (err) {
               res.status(500).send(err);
