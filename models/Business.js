@@ -83,5 +83,16 @@ let SurveySchema = new Schema({
         collection: 'content'
     });
 
-module.exports = {Surveys: mongoose.model('Surveys', SurveySchema),
-                  Content: mongoose.model('Content', ContentSchema)};
+  let TimelineSchema = new Schema({
+    age: { type: String },
+    animalType: { type: String },
+    title: { type: String },
+    picture: { type: String },
+    subtitle: { type: String },
+    descriptionText: { type: String },
+    infoItems: { type: [String] }
+  }, {
+        collection: 'timeline'
+    });
+
+module.exports = {Timeline: mongoose.model('Timeline', TimelineSchema)};

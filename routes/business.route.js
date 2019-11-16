@@ -30,12 +30,12 @@ businessRoutes.route('/addContent').post(function (req, res) {
 });
 
 // Defined get data(index or listing) route
-businessRoutes.route('/get').get( async (req, res) => {
-    Business.Surveys.find({}, (err, user) => {
+businessRoutes.route('/').get( async (req, res) => {
+    Business.Timeline.find({}, (err, item) => {
             if (err) {
               res.status(500).send(err);
             }
-            res.status(200).json(user);
+            res.status(200).json(item);
     });
 });
 

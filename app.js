@@ -6,8 +6,8 @@ const cors = require('cors');
 const router = require('./routes/business.route');
 
 const MongoClient = require('mongodb').MongoClient;
-const CONNECTION_URL = "mongodb+srv://ungureanu:Botosani1989@cluster0-t0frr.mongodb.net/bogdaproste?retryWrites=true";
-const DATABASE_NAME = "bogdaproste";
+const CONNECTION_URL = "mongodb+srv://ungureanu:Botosani1989@cluster0-t0frr.mongodb.net/vetOnline?retryWrites=true";
+const DATABASE_NAME = "vetOnline";
 
 const app = express();
 
@@ -27,9 +27,23 @@ const mongoose = require('mongoose');
 const config = require('./DB');
 
 mongoose.Promise = global.Promise;
-mongoose.connect(config.DB, { useNewUrlParser: true }).then(
+mongoose.connect(config.DB, { useMongoClient: true }).then(
     (client) => {
       console.log('Connected to database');
+      // debugger;
+      // const collection = client.db("vetOnline").collection("timeline");
+      // var ins={
+      //   age:'1an',
+      //   animalType: 'pisica',
+      //   title: 'titlu',
+      //   picture: 'gdsgdsgdsgds',
+      //   subtitle: 'subtitlu',
+      //   descriptionText: 'descriere',
+      //   infoItems: ['ion', 'tiriac']
+      // };
+      // collection.insertOne(ins, function(err, res){
+      //   console.log('data inserted');
+      // });
     },
     err => { console.log('Can not connect to the database' + err) }
 );
