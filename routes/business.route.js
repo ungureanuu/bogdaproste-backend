@@ -6,18 +6,6 @@ const businessRoutes = express.Router();
 // Require Business model in our routes module
 let Business = require('../models/Business');
 
-// Defined store route
-businessRoutes.route('/add').post(function (req, res) {
-    let business = new Business.Surveys(req.body);
-    business.save()
-        .then(business => {
-            res.status(200).json({ 'business': 'business in added successfully' });
-        })
-        .catch(err => {
-            res.status(400).send("unable to be saved in database" + err);
-        });
-});
-
 businessRoutes.route('/addContent').post(function (req, res) {
   let business = new Business.Content(req.body);
   business.save()
@@ -30,13 +18,25 @@ businessRoutes.route('/addContent').post(function (req, res) {
 });
 
 // Defined get data(index or listing) route
-businessRoutes.route('/').get( async (req, res) => {
+businessRoutes.route('/api/timeline').get( async (req, res) => {
     Business.Timeline.find({}, (err, item) => {
             if (err) {
               res.status(500).send(err);
             }
             res.status(200).json(item);
     });
+});
+
+//POST s
+businessRoutes.route('/api/timeline/new').post(function (req, res) {
+    let business = new Business.Timeline(req.body);
+    business.save()
+        .then(business => {
+            res.status(200).json({ 'timelineItem': 'added successfully' });
+        })
+        .catch(err => {
+            res.status(400).send("unable to be saved in database" + err);
+        });
 });
 
 businessRoutes.route('/getContent').get( async (req, res) => {
