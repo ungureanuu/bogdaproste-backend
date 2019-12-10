@@ -5,7 +5,7 @@ const Schema = mongoose.Schema;
     age: { type: Object },
     animalType: { type: String },
     title: { type: String },
-    picture: { type: String },
+    picture: { type: Object },
     subtitle: { type: String },
     descriptionText: { type: String },
     infoItems: { type: [Object] },

@@ -3,6 +3,9 @@ const express = require('express');
 const app = express();
 const businessRoutes = express.Router();
 
+let multer = require('multer');
+let upload = multer();
+
 // Require Business model in our routes module
 let Business = require('../models/Business');
 
@@ -20,8 +23,17 @@ businessRoutes.route('/api/timeline/:type').get( async (req, res) => {
 });
 
 //POST
-businessRoutes.route('/api/timeline/new').post(function (req, res) {
+businessRoutes.route('/api/timeline/new').post(upload.single("foo-bar"), function (req, res) {
+    console.log( req.body );
+    console.log( req.files );
+
     let business = new Business.Timeline(req.body);
+    if (!req.file) {
+      console.log("No file received");
+    } else {
+      console.log('file received');
+    }
+
     business.save()
         .then(business => {
             res.status(200).json({ 'timelineItem': 'added successfully' });
