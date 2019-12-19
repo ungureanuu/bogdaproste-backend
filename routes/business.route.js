@@ -12,7 +12,10 @@ let Business = require('../models/Business');
 
 // Set The Storage Engine
 const storage = multer.diskStorage({
-  destination: './public/uploads/',
+  destination: function (req, file, cb) {
+    let dynamicPath = req.body.animalType;
+    cb(null, './public/timeline/' + dynamicPath)
+  },
   filename: function(req, file, cb){
     cb(null,file.fieldname + '-' + Date.now() + path.extname(file.originalname));
   }
@@ -59,8 +62,6 @@ businessRoutes.route('/api/timeline/:type').get( async (req, res) => {
 //POST
 businessRoutes.route('/api/timeline/new').post((req, res) => {
     
-   
-
     upload(req, res, (err) => {
       if(err){
         // res.render('index', {
@@ -73,13 +74,21 @@ businessRoutes.route('/api/timeline/new').post((req, res) => {
           //   msg: 'Error: No File Selected!'
           // });
           console.log('No File Selected');
-        } else {
-          console.log( req.file );
-          console.log( req.body );
-          // res.render('index', {
-          //   msg: 'File Uploaded!',
-          //   file: `uploads/${req.file.filename}`
-          // });
+        } else {  
+          let pictureObject = {
+            location: req.file.destination,
+            name: req.file.filename
+          }
+          req.body.picture = pictureObject;
+
+          let business = new Business.Timeline(req.body);
+          business.save()
+            .then(business => {
+                res.status(200).json({ 'timelineItem': 'added successfully' });
+            })
+            .catch(err => {
+                res.status(400).send("unable to be saved in database" + err);
+            });
         }
       }
     });
