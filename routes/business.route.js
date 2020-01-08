@@ -17,7 +17,7 @@ const storage = multer.diskStorage({
     cb(null, './public/timeline/' + dynamicPath)
   },
   filename: function(req, file, cb){
-    cb(null,file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+    cb(null,file.fieldname + '-' +  path.extname(file.originalname) + '-' + Date.now());
   }
 });
 
@@ -53,6 +53,7 @@ businessRoutes.route('/api/timeline/:type').get( async (req, res) => {
             if (err) {
               res.status(500).send(err);
             }
+          
             res.status(200).json(item);
         }).
         where('animalType').equals(req.params.type).
@@ -61,69 +62,85 @@ businessRoutes.route('/api/timeline/:type').get( async (req, res) => {
 
 //POST
 businessRoutes.route('/api/timeline/new').post((req, res) => {
-    
-    upload(req, res, (err) => {
-      if(err){
-        // res.render('index', {
-        //   msg: err
-        // });
-        console.log(err);
-      } else {
-        if(req.file == undefined){
-          // res.render('index', {
-          //   msg: 'Error: No File Selected!'
-          // });
-          console.log('No File Selected');
-        } else {  
-          let pictureObject = {
-            location: req.file.destination,
-            name: req.file.filename
-          }
-          req.body.picture = pictureObject;
-
-          let business = new Business.Timeline(req.body);
-          business.save()
-            .then(business => {
-                res.status(200).json({ 'timelineItem': 'added successfully' });
-            })
-            .catch(err => {
-                res.status(400).send("unable to be saved in database" + err);
-            });
-        }
+  let pictureObject = null;
+  upload(req, res, (err) => {
+    if(err){
+      console.log(err);
+    } else {
+      pictureObject = {
+        location: req.file.destination,
+        name: req.file.filename
       }
-    });
 
-    // let business = new Business.Timeline(req.body);
-    // if (!req.file) {
-    //   console.log("No file received");
-    // } else {
-    //   console.log('file received');
-    // }
+      let newTimelineItem = {
+        age: req.body.age,
+        animalType: req.body.animalType,
+        title: req.body.title,
+        picture: pictureObject != null ? pictureObject : req.body.picture,
+        subtitle: req.body.subtitle,
+        descriptionText: req.body.descriptionText,
+        infoItems: req.body.infoItems,
+        timelineIndex: req.body.timelineIndex,
+      }
 
-    // business.save()
-    //     .then(business => {
-    //         res.status(200).json({ 'timelineItem': 'added successfully' });
-    //     })
-    //     .catch(err => {
-    //         res.status(400).send("unable to be saved in database" + err);
-    //     });
+      let business = new Business.Timeline(newTimelineItem);
+      business.save()
+        .then(business => {
+            res.status(200).json({ 'timelineItem': 'added successfully' });
+        })
+        .catch(err => {
+            res.status(400).send("unable to be saved in database" + err);
+        });
+    }
+  });
 });
 
 
 // PUT
 businessRoutes.route('/api/timeline/edit/:id').put((req, res, next) => {
-    Business.Timeline.findByIdAndUpdate(req.params.id, {
-      $set: req.body
-    }, (error, data) => {
-      if (error) {
-        return next(error);
-        console.log(error)
-      } else {
-        res.json(data)
-        console.log('Data updated successfully')
-      }
-    })
+  let newTimelineItem = req.body;
+  console.log(newTimelineItem);
+  Business.Timeline.findByIdAndUpdate(req.params.id, {
+    $set: req.body
+  }, (error, data) => {
+    if (error) {
+      return next(error);
+      console.log(error)
+    } else {
+      res.json(data)
+      console.log('Data updated successfully')
+    }
   })
+});
+
+// Change timeline pic
+businessRoutes.route('/api/timeline/changePic').post((req, res) => {
+  let pictureObject = null;
+  upload(req, res, (err) => {
+    if(err){
+      console.log(err);
+    } else {
+      pictureObject = {
+        location: req.file.destination,
+        name: req.file.filename
+      }
+
+      let newTimelineItem = {
+        _id: req.body._id,
+        picture: pictureObject != null ? pictureObject : req.body.picture      
+      }
+
+      Business.Timeline.
+        find({}, (err, item) => {
+            if (err) {
+              res.status(500).send(err);
+            }                    
+            res.status(200).json(item);
+        }).
+        where('_id').equals(req.body._id)
+    }
+  });
+});
   
 // DELETE 
 businessRoutes.route('/api/timeline/delete/:id').delete((req, res, next) => {
