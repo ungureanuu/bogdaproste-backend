@@ -17,7 +17,7 @@ const storage = multer.diskStorage({
     cb(null, './public/timeline/' + dynamicPath)
   },
   filename: function(req, file, cb){
-    cb(null,file.fieldname + '-' +  path.extname(file.originalname) + '-' + Date.now());
+    cb(null,file.fieldname + '-' + Date.now() +  path.extname(file.originalname));
   }
 });
 
@@ -76,7 +76,7 @@ businessRoutes.route('/api/timeline/new').post((req, res) => {
         age: req.body.age,
         animalType: req.body.animalType,
         title: req.body.title,
-        picture: pictureObject != null ? pictureObject : req.body.picture,
+        picture: pictureObject != null ? JSON.stringify(pictureObject) : req.body.picture,
         subtitle: req.body.subtitle,
         descriptionText: req.body.descriptionText,
         infoItems: req.body.infoItems,
@@ -124,20 +124,12 @@ businessRoutes.route('/api/timeline/changePic').post((req, res) => {
         location: req.file.destination,
         name: req.file.filename
       }
-
+      
       let newTimelineItem = {
         _id: req.body._id,
         picture: pictureObject != null ? pictureObject : req.body.picture      
       }
-
-      Business.Timeline.
-        find({}, (err, item) => {
-            if (err) {
-              res.status(500).send(err);
-            }                    
-            res.status(200).json(item);
-        }).
-        where('_id').equals(req.body._id)
+      res.status(200).json({'status': 'success', 'data': newTimelineItem});
     }
   });
 });
