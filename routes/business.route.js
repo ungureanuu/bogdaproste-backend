@@ -1,13 +1,11 @@
-
 const express = require('express');
 const app = express();
 const path = require('path');
 const businessRoutes = express.Router();
+const aws = require('aws-sdk');
+const fs = require( 'fs');
 
 let multer = require('multer');
-// let upload = multer();
-
-// Require Business model in our routes module
 let Business = require('../models/Business');
 
 // Set The Storage Engine
@@ -30,7 +28,6 @@ const upload = multer({
   }
 }).single('picture');
 
-// Check File Type
 function checkFileType(file, cb){
   // Allowed ext
   const filetypes = /jpeg|jpg|png|gif/;
@@ -44,6 +41,69 @@ function checkFileType(file, cb){
   } else {
     cb('Error: Images Only!');
   }
+}
+
+function uploadToS3(req, res) {  
+  let pictureObject = null;
+  let dynamicPath = "timeline/" + "pisica" + "/" + req.file.originalname;
+  aws.config.setPromisesDependency();
+  aws.config.update({
+    accessKeyId: "AKIAYSYMUMGJQ3FG7FPF",
+    secretAccessKey: "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",
+    region: "eu-central-1"
+  });
+  const s3 = new aws.S3();
+  var params = {
+    ACL: 'public-read',
+    Bucket: "smartvet",
+    Body: fs.createReadStream(req.file.path),
+    Key: dynamicPath
+  };
+
+  s3.upload(params, (err, data) => {
+    if (err) {
+      console.log('Error occured while trying to upload to S3 bucket', err);
+    }
+
+    // if (data) {
+    //   fs.unlinkSync(req.file.path); // Empty temp folder
+    //   const locationUrl = data.Location;
+    //   let newUser = new Business.Timeline({ ...req.body, file: locationUrl });
+    //   newUser
+    //     .save()
+    //     .then(user => {
+    //       res.json({ message: 'User created successfully', user });
+    //     })
+    //     .catch(err => {
+    //       console.log('Error occured while trying to save to DB');
+    //     });
+    // }
+  });
+
+  pictureObject = {
+    location: dynamicPath,
+    name: req.file.fieldname + '-' + Date.now() +  path.extname(req.file.originalname)
+  }
+
+  let newTimelineItem = {
+    age: req.body.age,
+    animalType: req.body.animalType,
+    title: req.body.title,
+    picture: pictureObject != null ? JSON.stringify(pictureObject) : req.body.picture,
+    subtitle: req.body.subtitle,
+    descriptionText: req.body.descriptionText,
+    infoItems: req.body.infoItems,
+    timelineIndex: req.body.timelineIndex,
+  }
+
+  let business = new Business.Timeline(newTimelineItem);
+  business.save()
+    .then(business => {
+        res.status(200).json({ 'timelineItem': 'added successfully' });
+    })
+    .catch(err => {
+        res.status(400).send("unable to be saved in database" + err);
+    });
 }
 
 // GET
@@ -61,39 +121,39 @@ businessRoutes.route('/api/timeline/:type').get( async (req, res) => {
 });
 
 //POST
-businessRoutes.route('/api/timeline/new').post((req, res) => {
-  let pictureObject = null;
-  upload(req, res, (err) => {
-    if(err){
-      console.log(err);
-    } else {
-      pictureObject = {
-        location: req.file.destination,
-        name: req.file.filename
-      }
+// businessRoutes.route('/api/timeline/new').post((req, res) => {
+  
+//   upload(req, res, (err) => {
+//     if(err){
+//       console.log(err);
+//     } else {
+//       pictureObject = {
+//         location: req.file.destination,
+//         name: req.file.filename
+//       }
 
-      let newTimelineItem = {
-        age: req.body.age,
-        animalType: req.body.animalType,
-        title: req.body.title,
-        picture: pictureObject != null ? JSON.stringify(pictureObject) : req.body.picture,
-        subtitle: req.body.subtitle,
-        descriptionText: req.body.descriptionText,
-        infoItems: req.body.infoItems,
-        timelineIndex: req.body.timelineIndex,
-      }
+//       let newTimelineItem = {
+//         age: req.body.age,
+//         animalType: req.body.animalType,
+//         title: req.body.title,
+//         picture: pictureObject != null ? JSON.stringify(pictureObject) : req.body.picture,
+//         subtitle: req.body.subtitle,
+//         descriptionText: req.body.descriptionText,
+//         infoItems: req.body.infoItems,
+//         timelineIndex: req.body.timelineIndex,
+//       }
 
-      let business = new Business.Timeline(newTimelineItem);
-      business.save()
-        .then(business => {
-            res.status(200).json({ 'timelineItem': 'added successfully' });
-        })
-        .catch(err => {
-            res.status(400).send("unable to be saved in database" + err);
-        });
-    }
-  });
-});
+//       let business = new Business.Timeline(newTimelineItem);
+//       business.save()
+//         .then(business => {
+//             res.status(200).json({ 'timelineItem': 'added successfully' });
+//         })
+//         .catch(err => {
+//             res.status(400).send("unable to be saved in database" + err);
+//         });
+//     }
+//   });
+// });
 
 
 // PUT
@@ -145,5 +205,14 @@ businessRoutes.route('/api/timeline/delete/:id').delete((req, res, next) => {
       }
     })
   })
+
+businessRoutes
+  .route('/api/timeline/new')
+  .post(
+    multer({ dest: 'temp/', limits: { fieldSize: 8 * 100024 * 100024 } }).single(
+      'picture'
+    ),
+    uploadToS3
+  );
 
 module.exports = businessRoutes;
